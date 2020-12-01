@@ -108,6 +108,7 @@ fn next_target(low_index: usize, high_index: usize, avoid: &[usize]) -> Option<u
         }
     }
 
+    worker = midpoint;
     while worker <= high_index {
         if avoid.contains(&worker) {
             worker += 1;
