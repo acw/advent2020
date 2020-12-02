@@ -7,7 +7,7 @@ use std::str::FromStr;
 fn real_main() -> Result<(), TopLevelError> {
     let mut numbers = Vec::new();
 
-    for argument in env::args().skip(2) {
+    for argument in env::args().skip(1) {
         let contents = fs::read_to_string(argument)?;
         for line in contents.lines() {
             match u64::from_str(line) {

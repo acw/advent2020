@@ -5,3 +5,4 @@ authors = ["Adam Wick <awick@uhsure.com>"]
 edition = "2018"
 
 [dependencies]
+nom = "6.0.1"
