@@ -35,14 +35,16 @@ convert_error!(io::Error, TopLevelError, IOError);
 
 pub enum PasswordParseError {
     StringToIntError(ParseIntError),
-    NomError(nom::Err<()>)
+    NomError(nom::Err<()>),
 }
 
 impl fmt::Display for PasswordParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             PasswordParseError::NomError(e) => write!(f, "Parse error: {}", e),
-            PasswordParseError::StringToIntError(e) => write!(f, "Error converting string to integer: {}", e),
+            PasswordParseError::StringToIntError(e) => {
+                write!(f, "Error converting string to integer: {}", e)
+            }
         }
     }
 }

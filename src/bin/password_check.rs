@@ -38,7 +38,11 @@ impl FromStr for PasswordData {
 
 impl PasswordData {
     fn is_valid_interpretation1(&self) -> bool {
-        let count = self.password.chars().filter(|x| *x == self.character).count();
+        let count = self
+            .password
+            .chars()
+            .filter(|x| *x == self.character)
+            .count();
         (count >= self.first_number) && (count <= self.second_number)
     }
 
@@ -59,7 +63,6 @@ impl PasswordData {
         first_matches ^ second_matches
     }
 }
-
 
 fn real_main() -> Result<(), TopLevelError> {
     let mut good_items_interpretation1 = 0u64;
@@ -83,8 +86,14 @@ fn real_main() -> Result<(), TopLevelError> {
         }
     }
 
-    println!("# of good passwords, according to interpretation #1: {}", good_items_interpretation1);
-    println!("# of good passwords, according to interpretation #2: {}", good_items_interpretation2);
+    println!(
+        "# of good passwords, according to interpretation #1: {}",
+        good_items_interpretation1
+    );
+    println!(
+        "# of good passwords, according to interpretation #2: {}",
+        good_items_interpretation2
+    );
 
     Ok(())
 }
