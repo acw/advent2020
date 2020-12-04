@@ -18,6 +18,7 @@ pub enum TopLevelError {
     NoInputFound,
     NoSolutionFound,
     UnknownError,
+    PassportParseError(PassportParseError),
 }
 
 impl fmt::Display for TopLevelError {
@@ -26,6 +27,7 @@ impl fmt::Display for TopLevelError {
             TopLevelError::IOError(e) => write!(f, "IO error: {}", e),
             TopLevelError::NoInputFound => write!(f, "No valid inputs found"),
             TopLevelError::NoSolutionFound => write!(f, "No solution found."),
+            TopLevelError::PassportParseError(p) => write!(f, "Error parsing passport: {}", p),
             TopLevelError::UnknownError => {
                 write!(f, "Unknown error occurred; this shouldn't be possible.")
             }
@@ -69,3 +71,19 @@ impl fmt::Display for MapParseError {
         }
     }
 }
+
+pub enum PassportParseError {
+    InvalidChunk(String),
+    InvalidField(String),
+}
+
+impl fmt::Display for PassportParseError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            PassportParseError::InvalidChunk(s) => write!(f, "Invalid chunk in passport line: {}", s),
+            PassportParseError::InvalidField(s) => write!(f, "Invalid field in passport: {}", s),
+        }
+    }
+}
+
+convert_error!(PassportParseError, TopLevelError, PassportParseError);
