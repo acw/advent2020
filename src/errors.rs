@@ -80,7 +80,9 @@ pub enum PassportParseError {
 impl fmt::Display for PassportParseError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            PassportParseError::InvalidChunk(s) => write!(f, "Invalid chunk in passport line: {}", s),
+            PassportParseError::InvalidChunk(s) => {
+                write!(f, "Invalid chunk in passport line: {}", s)
+            }
             PassportParseError::InvalidField(s) => write!(f, "Invalid field in passport: {}", s),
         }
     }

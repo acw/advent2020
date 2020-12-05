@@ -24,7 +24,7 @@ macro_rules! valid_range {
             Ok(x) if x < $low || x > $high => return false,
             Ok(_) => {}
         }
-    }
+    };
 }
 
 impl Passport {
@@ -60,19 +60,19 @@ impl Passport {
                 "cid" => self.country_id = Some(parts[1].to_string()),
                 unknown => return Err(PassportParseError::InvalidField(unknown.to_string())),
             }
-        } 
+        }
 
         Ok(())
     }
 
     fn is_basically_valid(&self) -> bool {
-        self.birth_year.is_some() &&
-        self.issue_year.is_some() &&
-        self.expiration_year.is_some() &&
-        self.height.is_some() &&
-        self.hair_color.is_some() &&
-        self.eye_color.is_some() &&
-        self.passport_id.is_some()
+        self.birth_year.is_some()
+            && self.issue_year.is_some()
+            && self.expiration_year.is_some()
+            && self.height.is_some()
+            && self.hair_color.is_some()
+            && self.eye_color.is_some()
+            && self.passport_id.is_some()
     }
 
     fn is_really_valid(&self) -> bool {
@@ -100,7 +100,6 @@ impl Passport {
                 } else {
                     return false;
                 }
-
             }
         }
 
@@ -118,7 +117,7 @@ impl Passport {
         // check the eye color
         match self.eye_color {
             None => return false,
-            Some(ref x) if VALID_EYE_COLORS.contains(&x.as_str()) => {},
+            Some(ref x) if VALID_EYE_COLORS.contains(&x.as_str()) => {}
             Some(_) => return false,
         }
 
@@ -146,20 +145,29 @@ fn real_main() -> Result<(), TopLevelError> {
         let mut current_passport = Passport::new();
 
         for line in contents.lines() {
-           if line == "" {
-               passports.push(current_passport);
-               current_passport = Passport::new();
-           } else {
-               current_passport.injest_data(line)?;
-           }
+            if line == "" {
+                passports.push(current_passport);
+                current_passport = Passport::new();
+            } else {
+                current_passport.injest_data(line)?;
+            }
         }
         passports.push(current_passport);
     }
 
-    let valid_passports: Vec<&Passport> = passports.iter().filter(|x| x.is_basically_valid()).collect();
-    println!("There are {} *basically* valid passports.", valid_passports.len());
-    println!("   ... {} are really valid", passports.iter().filter(|x| x.is_really_valid()).count());
-    
+    let valid_passports: Vec<&Passport> = passports
+        .iter()
+        .filter(|x| x.is_basically_valid())
+        .collect();
+    println!(
+        "There are {} *basically* valid passports.",
+        valid_passports.len()
+    );
+    println!(
+        "   ... {} are really valid",
+        passports.iter().filter(|x| x.is_really_valid()).count()
+    );
+
     Ok(())
 }
 
