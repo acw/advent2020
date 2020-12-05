@@ -19,6 +19,7 @@ pub enum TopLevelError {
     NoSolutionFound,
     UnknownError,
     PassportParseError(PassportParseError),
+    SeatParseError(SeatParseError),
 }
 
 impl fmt::Display for TopLevelError {
@@ -28,6 +29,7 @@ impl fmt::Display for TopLevelError {
             TopLevelError::NoInputFound => write!(f, "No valid inputs found"),
             TopLevelError::NoSolutionFound => write!(f, "No solution found."),
             TopLevelError::PassportParseError(p) => write!(f, "Error parsing passport: {}", p),
+            TopLevelError::SeatParseError(s) => write!(f, "Error parsing seat: {}", s),
             TopLevelError::UnknownError => {
                 write!(f, "Unknown error occurred; this shouldn't be possible.")
             }
@@ -89,3 +91,48 @@ impl fmt::Display for PassportParseError {
 }
 
 convert_error!(PassportParseError, TopLevelError, PassportParseError);
+
+#[derive(Debug, PartialEq)]
+pub enum SeatParseError {
+    InvalidSeatIdentifier(String),
+    BadSeatRowSectionSize(usize),
+    BadSeatColumnSectionSize(usize),
+    UnexpectedRowCharacter(char),
+    UnexpectedColumnCharacter(char),
+    DidNotResolveColumn(String),
+    DidNotResolveRow(String),
+}
+
+impl fmt::Display for SeatParseError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            SeatParseError::InvalidSeatIdentifier(s) => {
+                write!(f, "Invalid seat identifier: {:?}", s)
+            }
+            SeatParseError::BadSeatRowSectionSize(x) => write!(
+                f,
+                "Bad identifiers for rows; expected {} characters, got {}",
+                7, x
+            ),
+            SeatParseError::BadSeatColumnSectionSize(x) => write!(
+                f,
+                "Bad identifiers for columns; expected {} characters, got {}",
+                3, x
+            ),
+            SeatParseError::UnexpectedRowCharacter(c) => {
+                write!(f, "Unexpected character when parsing rows: {:?}", c)
+            }
+            SeatParseError::UnexpectedColumnCharacter(c) => {
+                write!(f, "Unexpected character when parsing columns: {:?}", c)
+            }
+            SeatParseError::DidNotResolveRow(s) => {
+                write!(f, "Could not resolve row with {:?}", s)
+            }
+            SeatParseError::DidNotResolveColumn(s) => {
+                write!(f, "Could not resolve row with {:?}", s)
+            }
+        }
+    }
+}
+
+convert_error!(SeatParseError, TopLevelError, SeatParseError);
