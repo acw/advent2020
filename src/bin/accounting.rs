@@ -4,7 +4,7 @@ use std::env;
 use std::fs;
 use std::str::FromStr;
 
-fn real_main() -> Result<(), TopLevelError> {
+fn main() -> Result<(), TopLevelError> {
     let mut numbers = Vec::new();
 
     for argument in env::args().skip(1) {
@@ -118,10 +118,4 @@ fn next_target(low_index: usize, high_index: usize, avoid: &[usize]) -> Option<u
     }
 
     None
-}
-
-fn main() {
-    if let Err(e) = real_main() {
-        eprintln!("ERROR: {}", e);
-    }
 }

@@ -154,7 +154,7 @@ impl Iterator for VariantGenerator {
     }
 }
 
-fn real_main() -> Result<(), TopLevelError> {
+fn main() -> Result<(), TopLevelError> {
     let filename = env::args().skip(1).next().expect("No file argument given.");
     let contents = fs::read_to_string(filename)?;
     let machine = Machine::from_str(&contents)?;
@@ -177,10 +177,4 @@ fn real_main() -> Result<(), TopLevelError> {
     }
 
     Ok(())
-}
-
-fn main() {
-    if let Err(e) = real_main() {
-        eprintln!("ERROR: {}", e);
-    }
 }

@@ -119,7 +119,7 @@ fn example_boarding_passes() {
     );
 }
 
-fn real_main() -> Result<(), TopLevelError> {
+fn main() -> Result<(), TopLevelError> {
     let mut seats = BTreeSet::new();
     let mut highest_id = 0;
 
@@ -147,10 +147,4 @@ fn real_main() -> Result<(), TopLevelError> {
     }
 
     Err(TopLevelError::NoSolutionFound)
-}
-
-fn main() {
-    if let Err(e) = real_main() {
-        eprintln!("ERROR: {}", e);
-    }
 }

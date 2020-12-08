@@ -186,7 +186,7 @@ fn parse_rule_item(input0: &str) -> nom::IResult<&str, Rule> {
     Ok((input6, Rule { count, bag }))
 }
 
-fn real_main() -> Result<(), TopLevelError> {
+fn main() -> Result<(), TopLevelError> {
     let mut rules = RuleSet::empty();
 
     for argument in env::args().skip(1) {
@@ -211,10 +211,4 @@ fn real_main() -> Result<(), TopLevelError> {
     );
 
     Ok(())
-}
-
-fn main() {
-    if let Err(e) = real_main() {
-        eprintln!("ERROR: {}", e);
-    }
 }

@@ -64,7 +64,7 @@ impl PasswordData {
     }
 }
 
-fn real_main() -> Result<(), TopLevelError> {
+fn main() -> Result<(), TopLevelError> {
     let mut good_items_interpretation1 = 0u64;
     let mut good_items_interpretation2 = 0u64;
 
@@ -96,10 +96,4 @@ fn real_main() -> Result<(), TopLevelError> {
     );
 
     Ok(())
-}
-
-fn main() {
-    if let Err(e) = real_main() {
-        eprintln!("ERROR: {}", e);
-    }
 }

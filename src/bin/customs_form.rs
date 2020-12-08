@@ -3,7 +3,7 @@ use std::collections::BTreeSet;
 use std::env;
 use std::fs;
 
-fn real_main() -> Result<(), TopLevelError> {
+fn main() -> Result<(), TopLevelError> {
     let mut customs_forms_any = Vec::new();
     let mut customs_forms_all = Vec::new();
 
@@ -73,10 +73,4 @@ fn every_seat() -> BTreeSet<char> {
     }
 
     result
-}
-
-fn main() {
-    if let Err(e) = real_main() {
-        eprintln!("ERROR: {}", e);
-    }
 }

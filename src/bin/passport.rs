@@ -137,7 +137,7 @@ fn valid_year_range(field: &Option<String>, start: u64, end: u64) -> bool {
     true
 }
 
-fn real_main() -> Result<(), TopLevelError> {
+fn main() -> Result<(), TopLevelError> {
     let mut passports = Vec::new();
 
     for argument in env::args().skip(1) {
@@ -169,10 +169,4 @@ fn real_main() -> Result<(), TopLevelError> {
     );
 
     Ok(())
-}
-
-fn main() {
-    if let Err(e) = real_main() {
-        eprintln!("ERROR: {}", e);
-    }
 }

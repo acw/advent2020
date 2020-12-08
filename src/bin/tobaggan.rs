@@ -49,7 +49,7 @@ fn trail_for_slope(map: &Map<Square>, run: usize, fall: usize) -> Encounters {
     encounters
 }
 
-fn real_main() -> Result<(), TopLevelError> {
+fn main() -> Result<(), TopLevelError> {
     let mut maybe_map = None;
 
     for argument in env::args().skip(1) {
@@ -90,10 +90,4 @@ fn real_main() -> Result<(), TopLevelError> {
     println!("The product of the trees encountered is {}", product);
 
     Ok(())
-}
-
-fn main() {
-    if let Err(e) = real_main() {
-        eprintln!("ERROR: {}", e);
-    }
 }
