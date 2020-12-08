@@ -19,6 +19,7 @@ pub enum TopLevelError {
     UnknownError,
     PassportParseError(PassportParseError),
     SeatParseError(SeatParseError),
+    BaggageParseError(BaggageRuleParseError),
 }
 
 impl fmt::Display for TopLevelError {
@@ -29,6 +30,7 @@ impl fmt::Display for TopLevelError {
             TopLevelError::NoSolutionFound => write!(f, "No solution found."),
             TopLevelError::PassportParseError(p) => write!(f, "Error parsing passport: {}", p),
             TopLevelError::SeatParseError(s) => write!(f, "Error parsing seat: {}", s),
+            TopLevelError::BaggageParseError(e) => write!(f, "Error parsing baggage rule: {}", e),
             TopLevelError::UnknownError => {
                 write!(f, "Unknown error occurred; this shouldn't be possible.")
             }
@@ -110,13 +112,13 @@ impl fmt::Display for SeatParseError {
             }
             SeatParseError::BadSeatRowSectionSize(x) => write!(
                 f,
-                "Bad identifiers for rows; expected {} characters, got {}",
-                7, x
+                "Bad identifiers for rows; expected 7 characters, got {}",
+                x
             ),
             SeatParseError::BadSeatColumnSectionSize(x) => write!(
                 f,
-                "Bad identifiers for columns; expected {} characters, got {}",
-                3, x
+                "Bad identifiers for columns; expected 3 characters, got {}",
+                x
             ),
             SeatParseError::UnexpectedRowCharacter(c) => {
                 write!(f, "Unexpected character when parsing rows: {:?}", c)
@@ -135,3 +137,34 @@ impl fmt::Display for SeatParseError {
 }
 
 convert_error!(SeatParseError, TopLevelError, SeatParseError);
+
+pub enum BaggageRuleParseError {
+    NomError(String),
+    NumericConversionError(ParseIntError),
+}
+
+impl fmt::Display for BaggageRuleParseError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            BaggageRuleParseError::NomError(e) => write!(f, "General parsing error: {}", e),
+            BaggageRuleParseError::NumericConversionError(e) => {
+                write!(f, "Error converting number to value: {}", e)
+            }
+        }
+    }
+}
+
+convert_error!(BaggageRuleParseError, TopLevelError, BaggageParseError);
+convert_error!(ParseIntError, BaggageRuleParseError, NumericConversionError);
+
+impl<'a> From<nom::Err<nom::error::Error<&'a str>>> for BaggageRuleParseError {
+    fn from(x: nom::Err<nom::error::Error<&'a str>>) -> BaggageRuleParseError {
+        match x {
+            nom::Err::Incomplete(x) => {
+                BaggageRuleParseError::NomError(format!("Incomplete data stream (need: {:?})", x))
+            }
+            nom::Err::Error(e) => BaggageRuleParseError::NomError(e.to_string()),
+            nom::Err::Failure(e) => BaggageRuleParseError::NomError(e.to_string()),
+        }
+    }
+}
