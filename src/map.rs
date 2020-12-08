@@ -30,10 +30,8 @@ where
             _height += 1;
             if width == 0 {
                 width = current_line.len();
-            } else {
-                if width != current_line.len() {
-                    return Err(E::from(MapParseError::UnevenLines(_height)));
-                }
+            } else if width != current_line.len() {
+                return Err(E::from(MapParseError::UnevenLines(_height)));
             }
             data.push(current_line);
         }

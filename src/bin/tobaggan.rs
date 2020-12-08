@@ -93,8 +93,7 @@ fn real_main() -> Result<(), TopLevelError> {
 }
 
 fn main() {
-    match real_main() {
-        Err(e) => eprintln!("ERROR: {}", e),
-        Ok(_) => {}
+    if let Err(e) = real_main() {
+        eprintln!("ERROR: {}", e);
     }
 }
