@@ -1,8 +1,8 @@
 use advent2020::errors::{ExecutionError, InstructionParseError, TopLevelError};
-use std::{collections::HashSet, env};
 use std::fmt;
 use std::fs;
 use std::str::FromStr;
+use std::{collections::HashSet, env};
 
 #[derive(Clone)]
 struct Machine {
@@ -27,15 +27,21 @@ impl FromStr for Instruction {
         lowered.make_ascii_lowercase();
 
         let mut items = s.split(' ');
-        let instruction = items.next().ok_or(InstructionParseError::EmptyInstruction)?;
-        let operand = items.next().ok_or(InstructionParseError::MissingOperand(instruction.to_string()))?;
+        let instruction = items
+            .next()
+            .ok_or(InstructionParseError::EmptyInstruction)?;
+        let operand = items.next().ok_or(InstructionParseError::MissingOperand(
+            instruction.to_string(),
+        ))?;
         let operand_value = isize::from_str(operand)?;
 
         match instruction {
             "nop" => Ok(Instruction::NOP(operand_value)),
             "acc" => Ok(Instruction::ACC(operand_value)),
             "jmp" => Ok(Instruction::JMP(operand_value)),
-            _ => Err(InstructionParseError::UnknownOpcode(instruction.to_string())),
+            _ => Err(InstructionParseError::UnknownOpcode(
+                instruction.to_string(),
+            )),
         }
     }
 }
@@ -72,7 +78,11 @@ impl FromStr for Machine {
 impl Machine {
     fn pretty_print(&self) {
         for (idx, instr) in self.instructions.iter().enumerate() {
-            let pointer = if (idx as isize) == self.location { "--> " } else { "    " };
+            let pointer = if (idx as isize) == self.location {
+                "--> "
+            } else {
+                "    "
+            };
             println!("{} {:04}: {}", pointer, idx, instr);
         }
     }
@@ -171,7 +181,10 @@ fn main() -> Result<(), TopLevelError> {
     // this is part 2
     for mut variant in machine.variants() {
         if let Ok((true, final_value)) = variant.terminates() {
-            println!("\nFound a variant that halts! Its last value is {}", final_value);
+            println!(
+                "\nFound a variant that halts! Its last value is {}",
+                final_value
+            );
             variant.pretty_print();
         }
     }

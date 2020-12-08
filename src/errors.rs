@@ -108,14 +108,14 @@ impl<'a> From<nom::Err<nom::error::Error<&'a str>>> for BaggageRuleParseError {
     }
 }
 
-#[derive(Error,Debug)]
+#[derive(Error, Debug)]
 pub enum InstructionParseError {
     #[error("Unknown opcode {0}")]
     UnknownOpcode(String),
     #[error("Couldn't convert number: {source}")]
     NumConversionError {
         #[from]
-        source: ParseIntError
+        source: ParseIntError,
     },
     #[error("Encountered an empty instruction (?)")]
     EmptyInstruction,
@@ -123,7 +123,7 @@ pub enum InstructionParseError {
     MissingOperand(String),
 }
 
-#[derive(Error,Debug)]
+#[derive(Error, Debug)]
 pub enum ExecutionError {
     #[error("Tried to execute non-existent instruction at {0}")]
     NonExistentLocation(isize),
