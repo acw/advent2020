@@ -40,6 +40,8 @@ pub enum TopLevelError {
         #[from]
         source: ExecutionError,
     },
+    #[error("Numeric conversion error: {0}")]
+    NumConversionError(#[from] ParseIntError),
 }
 
 #[derive(Error, Debug)]
