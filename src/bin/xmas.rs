@@ -116,7 +116,7 @@ fn third_example() {
 }
 
 fn main() -> Result<(), TopLevelError> {
-    let filename = env::args().skip(1).next().expect("No file argument given.");
+    let filename = env::args().nth(1).expect("No file argument given.");
     let contents = fs::read_to_string(filename)?;
     let mut xmas_checker = XmasChecker::new(25);
 

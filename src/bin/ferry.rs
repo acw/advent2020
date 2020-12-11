@@ -40,10 +40,12 @@ impl Into<char> for FerryLocation {
     }
 }
 
+type ViewerResult = Result<Vec<FerryLocation>, MapOperationError>;
+
 struct EvolvingMap {
     next_map: Option<Map<FerryLocation>>,
     occupation_tolerance: usize,
-    view: fn(&Map<FerryLocation>, usize, usize) -> Result<Vec<FerryLocation>, MapOperationError>,
+    view: fn(&Map<FerryLocation>, usize, usize) -> ViewerResult,
 }
 
 impl From<Map<FerryLocation>> for EvolvingMap {

@@ -30,7 +30,7 @@ impl FromStr for Instruction {
         let instruction = items
             .next()
             .ok_or(InstructionParseError::EmptyInstruction)?;
-        let operand = items.next().ok_or(InstructionParseError::MissingOperand(
+        let operand = items.next().ok_or_else(|| InstructionParseError::MissingOperand(
             instruction.to_string(),
         ))?;
         let operand_value = isize::from_str(operand)?;
@@ -165,7 +165,7 @@ impl Iterator for VariantGenerator {
 }
 
 fn main() -> Result<(), TopLevelError> {
-    let filename = env::args().skip(1).next().expect("No file argument given.");
+    let filename = env::args().nth(1).expect("No file argument given.");
     let contents = fs::read_to_string(filename)?;
     let machine = Machine::from_str(&contents)?;
 

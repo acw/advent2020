@@ -54,7 +54,7 @@ impl<X: Clone> Map<X> {
 
     pub fn at_unwrapped(&self, x: usize, y: usize) -> Option<X> {
         let row = self.data.get(y)?;
-        row.get(x).map(|x| x.clone())
+        row.get(x).cloned()
     }
 
     fn view(&self, f: fn(&X) -> bool, x: usize, y: usize, rise: isize, run: isize) -> Option<X> {
@@ -125,7 +125,7 @@ impl<X: Clone> Map<X> {
         Ok(results)
     }
 
-    pub fn locations<'a>(&'a self) -> MapLocations<'a, X> {
+    pub fn locations(&self) -> MapLocations<X> {
         MapLocations {
             underlying: self,
             x: 0,
@@ -176,7 +176,7 @@ impl<X: Clone + Into<char>> Map<X> {
             for x in 0..self.width {
                 print!("{}", self.at(x, y).unwrap().into());
             }
-            println!("");
+            println!();
         }
     }
 }
