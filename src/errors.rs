@@ -42,6 +42,10 @@ pub enum TopLevelError {
     },
     #[error("Numeric conversion error: {0}")]
     NumConversionError(#[from] ParseIntError),
+    #[error("Error parsing map: {0}")]
+    MapParseError(#[from] MapParseError),
+    #[error("Error accessing map: {0}")]
+    MapOperationError(#[from] MapOperationError),
 }
 
 #[derive(Error, Debug)]
@@ -129,4 +133,10 @@ pub enum InstructionParseError {
 pub enum ExecutionError {
     #[error("Tried to execute non-existent instruction at {0}")]
     NonExistentLocation(isize),
+}
+
+#[derive(Error, Debug)]
+pub enum MapOperationError {
+    #[error("Out of bounds indexing map with ({0},{1})")]
+    OutOfBounds(usize, usize),
 }
