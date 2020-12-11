@@ -20,7 +20,7 @@ impl FerryLocation {
 impl TryFrom<char> for FerryLocation {
     type Error = MapParseError;
 
-    fn try_from(c: char) -> Result<Self,Self::Error> {
+    fn try_from(c: char) -> Result<Self, Self::Error> {
         match c {
             '.' => Ok(FerryLocation::Floor),
             'L' => Ok(FerryLocation::EmptySeat),
@@ -51,8 +51,8 @@ impl From<Map<FerryLocation>> for EvolvingMap {
         EvolvingMap {
             next_map: Some(start_map),
             occupation_tolerance: 4,
-            view: |m, x, y| { m.adjacents(x, y) },
-         }
+            view: |m, x, y| m.adjacents(x, y),
+        }
     }
 }
 
@@ -64,7 +64,11 @@ impl Iterator for EvolvingMap {
         let mut next_map = current_map.clone();
 
         for (x, y, value) in current_map.locations() {
-            let occupied_neighbors = (self.view)(&current_map, x, y).ok()?.iter().filter(|x| **x == FerryLocation::TakenSeat).count();
+            let occupied_neighbors = (self.view)(&current_map, x, y)
+                .ok()?
+                .iter()
+                .filter(|x| **x == FerryLocation::TakenSeat)
+                .count();
             match value {
                 FerryLocation::EmptySeat if occupied_neighbors == 0 => {
                     next_map.set(x, y, FerryLocation::TakenSeat).ok()?;
@@ -86,7 +90,7 @@ impl Iterator for EvolvingMap {
     }
 }
 
-fn main() -> Result<(),TopLevelError> {
+fn main() -> Result<(), TopLevelError> {
     let filename = env::args().nth(1).expect("No file argument given.");
     let contents = fs::read_to_string(filename)?;
     let map = Map::<FerryLocation>::try_from(contents.as_str())?;
@@ -96,19 +100,25 @@ fn main() -> Result<(),TopLevelError> {
     for (idx, step) in base_evolving_map.enumerate() {
         println!("Base map, step #{}", idx);
         step.print();
-        println!("# of occupied seats: {}\n", step.count(FerryLocation::TakenSeat));
+        println!(
+            "# of occupied seats: {}\n",
+            step.count(FerryLocation::TakenSeat)
+        );
     }
 
     // part 2
     let view_evolving_map = EvolvingMap {
         next_map: Some(map),
         occupation_tolerance: 5,
-        view: |m,x,y| m.adjacents_until(x, y, FerryLocation::is_seat),
+        view: |m, x, y| m.adjacents_until(x, y, FerryLocation::is_seat),
     };
     for (idx, step) in view_evolving_map.enumerate() {
         println!("Extended map, step #{}", idx);
         step.print();
-        println!("# of occupied seats: {}\n", step.count(FerryLocation::TakenSeat));
+        println!(
+            "# of occupied seats: {}\n",
+            step.count(FerryLocation::TakenSeat)
+        );
     }
 
     Ok(())

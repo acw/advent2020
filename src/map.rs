@@ -62,12 +62,16 @@ impl<X: Clone> Map<X> {
         let mut sy = (y as isize) + rise;
 
         loop {
-            if sx < 0 { return None; }
-            if sy < 0 { return None; }
+            if sx < 0 {
+                return None;
+            }
+            if sy < 0 {
+                return None;
+            }
 
             let entry = self.at_unwrapped(sx as usize, sy as usize)?;
             if f(&entry) {
-                return Some(entry)
+                return Some(entry);
             }
 
             sx += run;
@@ -76,7 +80,10 @@ impl<X: Clone> Map<X> {
     }
 
     pub fn set(&mut self, x: usize, y: usize, value: X) -> Result<(), MapOperationError> {
-        let row = self.data.get_mut(y).ok_or(MapOperationError::OutOfBounds(x, y))?;
+        let row = self
+            .data
+            .get_mut(y)
+            .ok_or(MapOperationError::OutOfBounds(x, y))?;
 
         if x >= self.width {
             return Err(MapOperationError::OutOfBounds(x, y));
@@ -91,12 +98,16 @@ impl<X: Clone> Map<X> {
         self.adjacents_until(x, y, |_| true)
     }
 
-    pub fn adjacents_until(&self, x: usize, y: usize, f: fn(&X) -> bool) -> Result<Vec<X>, MapOperationError>
-    {
+    pub fn adjacents_until(
+        &self,
+        x: usize,
+        y: usize,
+        f: fn(&X) -> bool,
+    ) -> Result<Vec<X>, MapOperationError> {
         if y >= self.height {
             return Err(MapOperationError::OutOfBounds(x, y));
         }
-        
+
         if x >= self.width {
             return Err(MapOperationError::OutOfBounds(x, y));
         }
@@ -110,7 +121,6 @@ impl<X: Clone> Map<X> {
         push_some(&mut results, self.view(f, x, y, 1, -1));
         push_some(&mut results, self.view(f, x, y, 1, 0));
         push_some(&mut results, self.view(f, x, y, 1, 1));
-
 
         Ok(results)
     }
@@ -130,13 +140,13 @@ impl<X: Clone + PartialEq> Map<X> {
     }
 }
 
-pub struct MapLocations<'a,X: Clone> {
+pub struct MapLocations<'a, X: Clone> {
     underlying: &'a Map<X>,
     x: usize,
     y: usize,
 }
 
-impl<'a, X: Clone> Iterator for MapLocations<'a,X> {
+impl<'a, X: Clone> Iterator for MapLocations<'a, X> {
     type Item = (usize, usize, X);
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -173,13 +183,11 @@ impl<X: Clone + Into<char>> Map<X> {
 
 impl<X: Clone + PartialEq> PartialEq<Map<X>> for Map<X> {
     fn eq(&self, other: &Self) -> bool {
-        self.height == other.height &&
-          self.width == other.width &&
-          self.data == other.data
+        self.height == other.height && self.width == other.width && self.data == other.data
     }
 }
 
-impl<X: Clone + PartialEq + Eq> Eq for Map<X> { }
+impl<X: Clone + PartialEq + Eq> Eq for Map<X> {}
 
 fn push_some<X>(vector: &mut Vec<X>, value: Option<X>) {
     if let Some(val) = value {
