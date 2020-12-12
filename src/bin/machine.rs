@@ -30,9 +30,9 @@ impl FromStr for Instruction {
         let instruction = items
             .next()
             .ok_or(InstructionParseError::EmptyInstruction)?;
-        let operand = items.next().ok_or_else(|| InstructionParseError::MissingOperand(
-            instruction.to_string(),
-        ))?;
+        let operand = items
+            .next()
+            .ok_or_else(|| InstructionParseError::MissingOperand(instruction.to_string()))?;
         let operand_value = isize::from_str(operand)?;
 
         match instruction {
