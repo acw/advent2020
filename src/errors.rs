@@ -46,6 +46,8 @@ pub enum TopLevelError {
     MapParseError(#[from] MapParseError),
     #[error("Error accessing map: {0}")]
     MapOperationError(#[from] MapOperationError),
+    #[error("Illegal ferry command: {0}")]
+    IllegalFerryCommand(#[from] IllegalFerryCommand),
 }
 
 #[derive(Error, Debug)]
@@ -139,4 +141,14 @@ pub enum ExecutionError {
 pub enum MapOperationError {
     #[error("Out of bounds indexing map with ({0},{1})")]
     OutOfBounds(usize, usize),
+}
+
+#[derive(Error, Debug)]
+pub enum IllegalFerryCommand {
+    #[error("Ran into an empty string for a command (?)")]
+    EmptyCommand,
+    #[error("Unknown command {0:?}")]
+    UnknownCommand(char),
+    #[error("Problem converting number: {0}")]
+    BadNumber(#[from] ParseIntError),
 }
