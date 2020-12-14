@@ -48,6 +48,10 @@ pub enum TopLevelError {
     MapOperationError(#[from] MapOperationError),
     #[error("Illegal ferry command: {0}")]
     IllegalFerryCommand(#[from] IllegalFerryCommand),
+    #[error("Mask parsing error: {0}")]
+    MaskParseError(#[from] MaskParseError),
+    #[error("Bitmask command parsing error: {0}")]
+    BitmaskCommandParseError(#[from] BitmaskCommandParseError),
 }
 
 #[derive(Error, Debug)]
@@ -150,5 +154,27 @@ pub enum IllegalFerryCommand {
     #[error("Unknown command {0:?}")]
     UnknownCommand(char),
     #[error("Problem converting number: {0}")]
+    BadNumber(#[from] ParseIntError),
+}
+
+#[derive(Error, Debug)]
+pub enum MaskParseError {
+    #[error("Mask value is the wrong size; expected 36 characters, got {0}")]
+    WrongLength(usize),
+    #[error("Unexpected character '{0}'")]
+    UnexpectedCharacter(char),
+}
+
+#[derive(Error, Debug)]
+pub enum BitmaskCommandParseError {
+    #[error("Got an empty command?")]
+    EmptyCommand,
+    #[error("Got a partial {0} command")]
+    PartialCommand(String),
+    #[error("Unknown command: {0}")]
+    UnknownCommand(String),
+    #[error("Error parsing mask: {0}")]
+    MaskParseError(#[from] MaskParseError),
+    #[error("Bad integer value encountered: {0}")]
     BadNumber(#[from] ParseIntError),
 }
