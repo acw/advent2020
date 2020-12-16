@@ -8,3 +8,6 @@ edition = "2018"
 nom = "6.0.1"
 petgraph = "0.5.1"
 thiserror = "1.0.22"
+
+[profile.release]
+debug = 1

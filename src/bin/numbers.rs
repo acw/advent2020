@@ -1,9 +1,23 @@
 use advent2020::errors::TopLevelError;
 use std::collections::HashMap;
 struct Game {
-    history: HashMap<usize, Vec<usize>>,
+    history: HashMap<usize, History>,
     on_turn: usize,
     last_value: usize,
+}
+
+pub enum History {
+    New(usize),
+    Old(usize, usize),
+}
+
+impl History {
+    fn add_timestamp(&mut self, now: usize) {
+        match self {
+            History::New(first) => *self = History::Old(*first, now),
+            History::Old(_, earlier) => *self = History::Old(*earlier, now),
+        }
+    }
 }
 
 impl Game {
@@ -19,9 +33,9 @@ impl Game {
         for value in starting_values {
             match history.get_mut(value) {
                 None => {
-                    let _ = history.insert(*value, vec![on_turn]);
+                    let _ = history.insert(*value, History::New(on_turn));
                 }
-                Some(v) => v.push(on_turn),
+                Some(v) => v.add_timestamp(on_turn),
             }
             on_turn += 1;
             last_value = *value;
@@ -37,13 +51,9 @@ impl Game {
     fn add_to_history(&mut self, value: usize) {
         match self.history.get_mut(&value) {
             None => {
-                let _ = self.history.insert(value, vec![self.on_turn]);
+                let _ = self.history.insert(value, History::New(self.on_turn));
             }
-            Some(v) if v.len() == 1 => v.push(self.on_turn),
-            Some(v) => {
-                v[0] = v[1];
-                v[1] = self.on_turn;
-            }
+            Some(v) => v.add_timestamp(self.on_turn),
         }
     }
 
@@ -53,12 +63,10 @@ impl Game {
             .get(&self.last_value)
             .expect("The world broke :(");
 
-        if insert_history.len() < 2 {
-            self.last_value = 0;
-        } else {
-            self.last_value = insert_history[1] - insert_history[0];
-        }
-
+        self.last_value = match insert_history {
+            History::New(_) => 0,
+            History::Old(earlier, later) => later - earlier,
+        };
         self.add_to_history(self.last_value);
         self.on_turn += 1;
     }
