@@ -52,6 +52,8 @@ pub enum TopLevelError {
     MaskParseError(#[from] MaskParseError),
     #[error("Bitmask command parsing error: {0}")]
     BitmaskCommandParseError(#[from] BitmaskCommandParseError),
+    #[error("Ticket parsing error: {0}")]
+    TicketParseError(#[from] TicketParseError),
 }
 
 #[derive(Error, Debug)]
@@ -177,4 +179,18 @@ pub enum BitmaskCommandParseError {
     MaskParseError(#[from] MaskParseError),
     #[error("Bad integer value encountered: {0}")]
     BadNumber(#[from] ParseIntError),
+}
+
+#[derive(Error, Debug)]
+pub enum TicketParseError {
+    #[error("Unterminated field section in file")]
+    UnterminatedFieldDefs,
+    #[error("Failure to parse number: {0}")]
+    ParseIntError(#[from] ParseIntError),
+    #[error("Problem parsing your ticket")]
+    YourTicketParseError,
+    #[error("Problem parsing nearby tickets")]
+    NearbyTicketParseError,
+    #[error("Bad field definition: {0}")]
+    BadFieldDefinition(String),
 }
