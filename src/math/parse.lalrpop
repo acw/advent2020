@@ -1,0 +1,32 @@
+use crate::math::ast::Math;
+use std::str::FromStr;
+
+grammar;
+
+pub Expr: Math = {
+    <e1: Expr> "+" <e2: Term> => Math::Add(Box::new(e1), Box::new(e2)),
+    <e1: Expr> "*" <e2: Term> => Math::Multiply(Box::new(e1), Box::new(e2)),
+    <e: Term> => e,
+} 
+
+Term: Math = {
+    <n:Num> => Math::Constant(n),
+    "(" <t:Expr> ")" => t,
+};
+
+pub ExprMul: Math = {
+    <e1: ExprMul> "*" <e2: ExprAdd> => Math::Multiply(Box::new(e1), Box::new(e2)),
+    <e: ExprAdd> => e,
+}
+
+ExprAdd: Math = {
+    <e1: ExprAdd> "+" <e2: ExprConst> => Math::Add(Box::new(e1), Box::new(e2)),
+    <e: ExprConst> => e,
+}
+
+ExprConst: Math = {
+    <n:Num> => Math::Constant(n),
+    "(" <t:ExprMul> ")" => t,
+}
+
+Num: usize = <s:r"[0-9]+"> => usize::from_str(s).unwrap();

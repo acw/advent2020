@@ -3,11 +3,16 @@ name = "advent2020"
 version = "0.1.0"
 authors = ["Adam Wick <awick@uhsure.com>"]
 edition = "2018"
+build = "build.rs"
 
 [dependencies]
+lalrpop-util = "0.19.1"
 nom = "6.0.1"
 petgraph = "0.5.1"
 thiserror = "1.0.22"
+
+[build-dependencies]
+lalrpop = { version = "0.19.1", features = ["lexer"] }
 
 [profile.release]
 debug = 1
