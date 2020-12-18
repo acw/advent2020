@@ -58,7 +58,12 @@ impl ConwayCube {
             }
         }
 
-        ConwayCube { x_range, y_range, z_range, active_points }
+        ConwayCube {
+            x_range,
+            y_range,
+            z_range,
+            active_points,
+        }
     }
 }
 
@@ -90,11 +95,13 @@ impl FromStr for ConwayCube {
         let height = data.len() as isize / width;
 
         if width != height {
-            return Err(TopLevelError::MapParseError(MapParseError::UnevenLines(width as usize)));
+            return Err(TopLevelError::MapParseError(MapParseError::UnevenLines(
+                width as usize,
+            )));
         }
 
-        let x_range = 0..=(width-1);
-        let y_range = 0..=(height-1);
+        let x_range = 0..=(width - 1);
+        let y_range = 0..=(height - 1);
         let z_range = 0..=0;
         let mut active_points = HashSet::new();
 
@@ -107,7 +114,12 @@ impl FromStr for ConwayCube {
             }
         }
 
-        Ok(ConwayCube { x_range, y_range, z_range, active_points })
+        Ok(ConwayCube {
+            x_range,
+            y_range,
+            z_range,
+            active_points,
+        })
     }
 }
 
@@ -149,8 +161,14 @@ impl Conway4Cube {
             for y_offset in -1..=1 {
                 for z_offset in -1..=1 {
                     for w_offset in -1..=1 {
-                        if (x_offset != 0) || (y_offset != 0) || (z_offset != 0) || (w_offset != 0) {
-                            if self.is_active(x + x_offset, y + y_offset, z + z_offset, w + w_offset) {
+                        if (x_offset != 0) || (y_offset != 0) || (z_offset != 0) || (w_offset != 0)
+                        {
+                            if self.is_active(
+                                x + x_offset,
+                                y + y_offset,
+                                z + z_offset,
+                                w + w_offset,
+                            ) {
                                 count += 1;
                             }
                         }
@@ -176,7 +194,9 @@ impl Conway4Cube {
                     for w in w_range.clone() {
                         let active_neighbors = self.active_neighbors(x, y, z, w);
 
-                        if self.is_active(x, y, z, w) && (active_neighbors == 2 || active_neighbors == 3) {
+                        if self.is_active(x, y, z, w)
+                            && (active_neighbors == 2 || active_neighbors == 3)
+                        {
                             active_points.insert((x, y, z, w));
                         } else {
                             if self.active_neighbors(x, y, z, w) == 3 {
@@ -188,7 +208,13 @@ impl Conway4Cube {
             }
         }
 
-        Conway4Cube { x_range, y_range, z_range, w_range, active_points }
+        Conway4Cube {
+            x_range,
+            y_range,
+            z_range,
+            w_range,
+            active_points,
+        }
     }
 }
 
@@ -199,7 +225,11 @@ impl<'a> From<&'a ConwayCube> for Conway4Cube {
             y_range: x.x_range.clone(),
             z_range: x.x_range.clone(),
             w_range: 0..=0,
-            active_points: x.active_points.iter().map(|(x,y,z)| (*x, *y, *z, 0)).collect(),
+            active_points: x
+                .active_points
+                .iter()
+                .map(|(x, y, z)| (*x, *y, *z, 0))
+                .collect(),
         }
     }
 }
@@ -217,8 +247,14 @@ fn main() -> Result<(), TopLevelError> {
         cube4 = cube4.next();
     }
 
-    println!("Active 3-dimensional points in the end: {}", cube.active_points.len());
-    println!("Active 4-dimensional points in the end: {}", cube4.active_points.len());
+    println!(
+        "Active 3-dimensional points in the end: {}",
+        cube.active_points.len()
+    );
+    println!(
+        "Active 4-dimensional points in the end: {}",
+        cube4.active_points.len()
+    );
 
     Ok(())
 }
