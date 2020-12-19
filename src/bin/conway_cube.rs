@@ -24,6 +24,7 @@ impl ConwayCube {
         for x_offset in -1..=1 {
             for y_offset in -1..=1 {
                 for z_offset in -1..=1 {
+                    #[allow(clippy::collapsible_if)]
                     if (x_offset != 0) || (y_offset != 0) || (z_offset != 0) {
                         if self.is_active(x + x_offset, y + y_offset, z + z_offset) {
                             count += 1;
@@ -47,12 +48,8 @@ impl ConwayCube {
                 for z in z_range.clone() {
                     let active_neighbors = self.active_neighbors(x, y, z);
 
-                    if self.is_active(x, y, z) && (active_neighbors == 2 || active_neighbors == 3) {
+                    if (self.is_active(x, y, z) && (active_neighbors == 2 || active_neighbors == 3)) || self.active_neighbors(x, y, z) == 3 {
                         active_points.insert((x, y, z));
-                    } else {
-                        if self.active_neighbors(x, y, z) == 3 {
-                            active_points.insert((x, y, z));
-                        }
                     }
                 }
             }
@@ -80,14 +77,14 @@ impl FromStr for ConwayCube {
                 match char {
                     '.' => data.push(false),
                     '#' => data.push(true),
-                    _ => return Err(MapParseError::UnexpectedCharacter(char))?,
+                    _ => return Err(MapParseError::UnexpectedCharacter(char).into()),
                 }
             }
 
             match computed_width {
                 None => computed_width = Some(data.len()),
                 Some(first_width) if data.len() - start_size == first_width => {}
-                Some(first_width) => return Err(MapParseError::UnevenLines(first_width))?,
+                Some(first_width) => return Err(MapParseError::UnevenLines(first_width).into()),
             }
         }
 
@@ -126,7 +123,7 @@ impl FromStr for ConwayCube {
 impl fmt::Display for ConwayCube {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for z in self.z_range.clone() {
-            write!(f, "z={}\n", z)?;
+            writeln!(f, "z={}", z)?;
             for y in self.y_range.clone() {
                 for x in self.x_range.clone() {
                     if self.is_active(x, y, z) {
@@ -135,7 +132,7 @@ impl fmt::Display for ConwayCube {
                         write!(f, ".")?;
                     }
                 }
-                write!(f, "\n")?;
+                writeln!(f)?;
             }
         }
         Ok(())
@@ -161,6 +158,7 @@ impl Conway4Cube {
             for y_offset in -1..=1 {
                 for z_offset in -1..=1 {
                     for w_offset in -1..=1 {
+                        #[allow(clippy::collapsible_if)]
                         if (x_offset != 0) || (y_offset != 0) || (z_offset != 0) || (w_offset != 0)
                         {
                             if self.is_active(
@@ -194,14 +192,9 @@ impl Conway4Cube {
                     for w in w_range.clone() {
                         let active_neighbors = self.active_neighbors(x, y, z, w);
 
-                        if self.is_active(x, y, z, w)
-                            && (active_neighbors == 2 || active_neighbors == 3)
+                        if (self.is_active(x, y, z, w) && (active_neighbors == 2 || active_neighbors == 3)) || self.active_neighbors(x, y, z, w) == 3
                         {
                             active_points.insert((x, y, z, w));
-                        } else {
-                            if self.active_neighbors(x, y, z, w) == 3 {
-                                active_points.insert((x, y, z, w));
-                            }
                         }
                     }
                 }

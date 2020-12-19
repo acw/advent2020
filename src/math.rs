@@ -1,6 +1,6 @@
 mod ast;
-
-lalrpop_util::lalrpop_mod!(parse, "/math/parse.rs");
+#[allow(clippy::all)]
+lalrpop_util::lalrpop_mod!(#[allow(clippy::all)] parse, "/math/parse.rs");
 
 pub use crate::math::ast::Math;
 use crate::math::parse::{ExprMulParser, ExprParser};
