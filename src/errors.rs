@@ -54,6 +54,8 @@ pub enum TopLevelError {
     BitmaskCommandParseError(#[from] BitmaskCommandParseError),
     #[error("Ticket parsing error: {0}")]
     TicketParseError(#[from] TicketParseError),
+    #[error("Bad rule parse: {0}")]
+    GrammarParseError(#[from] GrammarParseError),
 }
 
 #[derive(Error, Debug)]
@@ -193,4 +195,16 @@ pub enum TicketParseError {
     NearbyTicketParseError,
     #[error("Bad field definition: {0}")]
     BadFieldDefinition(String),
+}
+
+#[derive(Error, Debug, PartialEq)]
+pub enum GrammarParseError {
+    #[error("Bad rule reference: {0}")]
+    ParseIntError(#[from] ParseIntError),
+    #[error("Reference to unknown rule: {0}")]
+    UnknownRule(usize),
+    #[error("Bad rule definition: {0}")]
+    BadRule(String),
+    #[error("Duplicate rule definition for {0}")]
+    DuplicateRule(usize),
 }
