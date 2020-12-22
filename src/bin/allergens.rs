@@ -73,7 +73,7 @@ fn main() -> Result<(), TopLevelError> {
     for (key, mut val) in mapping.drain() {
         final_allergens.push((key, val.drain().next().unwrap()));
     }
-    final_allergens.sort_by(|(k1, v1), (k2, v2)| k1.cmp(k2));
+    final_allergens.sort_by(|(k1, _), (k2, _)| k1.cmp(k2));
     let foods: Vec<&str> = final_allergens.iter().map(|(_, v)| *v).collect();
     let mut result = String::new();
 

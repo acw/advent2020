@@ -124,6 +124,7 @@ impl Tile {
         self.raw_data[(y * self.edge_length) + x] = v;
     }
 
+    #[cfg(test)]
     fn draw(&self) {
         println!("Tile {} [{:?}]:", self.identity, self.history);
         for y in 0..self.edge_length {
@@ -463,7 +464,7 @@ impl Board {
                     .map(|x| x[0].identity)
                     .collect();
                 let orig_length = idents.len();
-                idents.sort();
+                idents.sort_unstable();
                 idents.dedup();
                 if idents.len() == orig_length {
                     return Ok(possible_board);
@@ -729,7 +730,7 @@ fn main() -> Result<(), TopLevelError> {
         tl * tr * bl * br
     );
     println!();
-    let mut base_image = Image::from(final_value);
+    let base_image = Image::from(final_value);
     base_image.draw();
     println!("---------------------");
     let sea_monster = Image::sea_monster();
