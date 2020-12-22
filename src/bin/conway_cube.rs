@@ -48,7 +48,9 @@ impl ConwayCube {
                 for z in z_range.clone() {
                     let active_neighbors = self.active_neighbors(x, y, z);
 
-                    if (self.is_active(x, y, z) && (active_neighbors == 2 || active_neighbors == 3)) || self.active_neighbors(x, y, z) == 3 {
+                    if (self.is_active(x, y, z) && (active_neighbors == 2 || active_neighbors == 3))
+                        || self.active_neighbors(x, y, z) == 3
+                    {
                         active_points.insert((x, y, z));
                     }
                 }
@@ -192,7 +194,9 @@ impl Conway4Cube {
                     for w in w_range.clone() {
                         let active_neighbors = self.active_neighbors(x, y, z, w);
 
-                        if (self.is_active(x, y, z, w) && (active_neighbors == 2 || active_neighbors == 3)) || self.active_neighbors(x, y, z, w) == 3
+                        if (self.is_active(x, y, z, w)
+                            && (active_neighbors == 2 || active_neighbors == 3))
+                            || self.active_neighbors(x, y, z, w) == 3
                         {
                             active_points.insert((x, y, z, w));
                         }

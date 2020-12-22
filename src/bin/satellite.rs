@@ -44,7 +44,12 @@ enum Modification {
 }
 
 impl Tile {
-    fn new(identity: usize, history: Vec<Modification>, edge_length: usize, raw_data: Vec<bool>) -> Tile {
+    fn new(
+        identity: usize,
+        history: Vec<Modification>,
+        edge_length: usize,
+        raw_data: Vec<bool>,
+    ) -> Tile {
         let mut res = Tile {
             identity,
             history,
@@ -58,15 +63,17 @@ impl Tile {
 
         for i in 0..edge_length {
             res.top = (res.top << 1) | res.get_value(i, 0);
-            res.bottom = (res.bottom << 1) | res.get_value(i, edge_length-1);
+            res.bottom = (res.bottom << 1) | res.get_value(i, edge_length - 1);
             res.left = (res.left << 1) | res.get_value(0, i);
-            res.right = (res.right << 1) | res.get_value(edge_length-1, i);
+            res.right = (res.right << 1) | res.get_value(edge_length - 1, i);
         }
 
         res
     }
 
-    fn read<'a, I: Iterator<Item = &'a str>>(lines: &mut I) -> Result<Option<Tile>, TileParseError> {
+    fn read<'a, I: Iterator<Item = &'a str>>(
+        lines: &mut I,
+    ) -> Result<Option<Tile>, TileParseError> {
         match lines.next() {
             None => Ok(None),
             Some("") => Tile::read(lines),
@@ -115,7 +122,7 @@ impl Tile {
 
     fn set(&mut self, x: usize, y: usize, v: bool) {
         self.raw_data[(y * self.edge_length) + x] = v;
-    } 
+    }
 
     fn draw(&self) {
         println!("Tile {} [{:?}]:", self.identity, self.history);
@@ -222,20 +229,16 @@ impl Tile {
 #[test]
 fn flip_x_test() {
     let raw_data = vec![
-        true, false, true, false,
-        true, true, true, true,
-        false, false, true, true,
-        false, false, false, false,
+        true, false, true, false, true, true, true, true, false, false, true, true, false, false,
+        false, false,
     ];
     let edge_length = 4;
     let identity = 1;
     let original = Tile::new(identity, vec![], edge_length, raw_data);
     let flipped = vec![
-          false, false, false, false,
-          false, false, true, true,
-          true, true, true, true,
-          true, false, true, false,
-        ];
+        false, false, false, false, false, false, true, true, true, true, true, true, true, false,
+        true, false,
+    ];
 
     assert_eq!(flipped, original.flip_over_x().raw_data);
 }
@@ -243,29 +246,30 @@ fn flip_x_test() {
 #[test]
 fn flip_y_test() {
     let raw_data = vec![
-        true, false, true, false,
-        true, true, true, true,
-        false, false, true, true,
-        false, false, false, false,
+        true, false, true, false, true, true, true, true, false, false, true, true, false, false,
+        false, false,
     ];
     let edge_length = 4;
     let identity = 1;
     let original = Tile::new(identity, vec![], edge_length, raw_data);
     let flipped = vec![
-            false, true, false, true,
-            true, true, true, true,
-            true, true, false, false,
-            false, false, false, false,
-        ];
+        false, true, false, true, true, true, true, true, true, true, false, false, false, false,
+        false, false,
+    ];
 
     assert_eq!(flipped, original.flip_over_y().raw_data);
 }
 
 #[test]
 fn rotate_test() {
-    let original = Tile::new(0, vec![], 3, vec![true, true, true, false, false, false, true, true, true]);
+    let original = Tile::new(
+        0,
+        vec![],
+        3,
+        vec![true, true, true, false, false, false, true, true, true],
+    );
     let rotated = vec![true, false, true, true, false, true, true, false, true];
-    assert_eq!(rotated, original.rotate().raw_data); 
+    assert_eq!(rotated, original.rotate().raw_data);
 }
 
 #[test]
@@ -288,15 +292,24 @@ fn next_to_tests() {
     let tile2473 = tiles.get(&2473).unwrap().flip_over_y().rotate();
     let tile1171 = tiles.get(&1171).unwrap().flip_over_y();
 
-    tile1951.draw(); println!();
-    tile2729.draw(); println!();
-    tile2971.draw(); println!();
-    tile2311.draw(); println!();
-    tile1427.draw(); println!();
-    tile1489.draw(); println!();
-    tile3079.draw(); println!();
-    tile2473.draw(); println!();
-    tile1171.draw(); println!();
+    tile1951.draw();
+    println!();
+    tile2729.draw();
+    println!();
+    tile2971.draw();
+    println!();
+    tile2311.draw();
+    println!();
+    tile1427.draw();
+    println!();
+    tile1489.draw();
+    println!();
+    tile3079.draw();
+    println!();
+    tile2473.draw();
+    println!();
+    tile1171.draw();
+    println!();
 
     // above tests
     assert!(tile1951.can_be_above(&tile2729));
@@ -355,11 +368,11 @@ impl Board {
     }
 
     fn get(&self, x: usize, y: usize) -> &[Tile] {
-        &self.raw_data[ (y * self.edge_length) + x ]
+        &self.raw_data[(y * self.edge_length) + x]
     }
 
     fn set(&mut self, x: usize, y: usize, v: Vec<Tile>) {
-        self.raw_data[ (y * self.edge_length) + x ] = v;
+        self.raw_data[(y * self.edge_length) + x] = v;
     }
 
     fn print_status(&self) {
@@ -382,19 +395,31 @@ impl Board {
                     let mut all_ok = true;
 
                     if x > 0 {
-                        all_ok &= self.get(x-1, y).iter().any(|other| possible.can_be_right_of(other));
+                        all_ok &= self
+                            .get(x - 1, y)
+                            .iter()
+                            .any(|other| possible.can_be_right_of(other));
                     }
 
                     if y > 0 {
-                        all_ok &= self.get(x, y-1).iter().any(|other| possible.can_be_below(other));
+                        all_ok &= self
+                            .get(x, y - 1)
+                            .iter()
+                            .any(|other| possible.can_be_below(other));
                     }
 
                     if x + 1 != self.edge_length {
-                        all_ok &= self.get(x+1, y).iter().any(|other| possible.can_be_left_of(other));
+                        all_ok &= self
+                            .get(x + 1, y)
+                            .iter()
+                            .any(|other| possible.can_be_left_of(other));
                     }
 
                     if y + 1 != self.edge_length {
-                        all_ok &= self.get(x, y+1).iter().any(|other| possible.can_be_above(other));
+                        all_ok &= self
+                            .get(x, y + 1)
+                            .iter()
+                            .any(|other| possible.can_be_above(other));
                     }
 
                     if all_ok {
@@ -419,10 +444,10 @@ impl Board {
 
         for x in 0..self.edge_length {
             for y in 0..self.edge_length {
-                if self.get(x,y).len() < possibilities {
+                if self.get(x, y).len() < possibilities {
                     split_x = x;
                     split_y = y;
-                    possibilities = self.get(x,y).len();
+                    possibilities = self.get(x, y).len();
                 }
             }
         }
@@ -432,7 +457,11 @@ impl Board {
             possible_board.set(split_x, split_y, vec![split_value.clone()]);
             while possible_board.reduce() {}
             if possible_board.raw_data.iter().all(|x| x.len() == 1) {
-                let mut idents: Vec<usize> = possible_board.raw_data.iter().map(|x| x[0].identity).collect();
+                let mut idents: Vec<usize> = possible_board
+                    .raw_data
+                    .iter()
+                    .map(|x| x[0].identity)
+                    .collect();
                 let orig_length = idents.len();
                 idents.sort();
                 idents.dedup();
@@ -481,23 +510,29 @@ impl From<Board> for Image {
         let height = edge_length;
 
         raw_data.resize(edge_length * edge_length, Pixel::Empty);
-        let mut result = Image { width, height, raw_data };
+        let mut result = Image {
+            width,
+            height,
+            raw_data,
+        };
 
         for board_y in 0..board_edge_length {
             for board_x in 0..board_edge_length {
                 let board = &b.get(board_x, board_y)[0];
 
                 for inner_y in 0..chunk_edge_length {
-                    for inner_x in 0.. chunk_edge_length {
+                    for inner_x in 0..chunk_edge_length {
                         let pixel_value = if board.get(inner_x + 1, inner_y + 1) {
                             Pixel::Block
                         } else {
                             Pixel::Empty
                         };
 
-                        result.set((board_x * chunk_edge_length) + inner_x,
-                                   (board_y * chunk_edge_length) + inner_y,
-                                   pixel_value);
+                        result.set(
+                            (board_x * chunk_edge_length) + inner_x,
+                            (board_y * chunk_edge_length) + inner_y,
+                            pixel_value,
+                        );
                     }
                 }
             }
@@ -510,20 +545,21 @@ impl From<Board> for Image {
 impl Image {
     fn sea_monster() -> Image {
         let data = "                  # #    ##    ##    ### #  #  #  #  #  #   ";
-        let raw_data = data.chars().map(|x| {
-            match x {
+        let raw_data = data
+            .chars()
+            .map(|x| match x {
                 ' ' => Pixel::Empty,
                 '#' => Pixel::Monster,
                 _ => panic!("the world broke"),
-            }
-        }).collect();
+            })
+            .collect();
         Image {
             width: 20,
             height: 3,
             raw_data,
         }
     }
-    
+
     fn get(&self, x: usize, y: usize) -> Pixel {
         self.raw_data[(y * self.width) + x]
     }
@@ -554,13 +590,14 @@ impl Image {
     fn overlay(&mut self, image: &Image) -> usize {
         let mut monsters_found = 0;
 
-        for x in 0..=(self.width-image.width) {
-            for y in 0..=(self.height-image.height) {
+        for x in 0..=(self.width - image.width) {
+            for y in 0..=(self.height - image.height) {
                 let mut all_match = true;
 
                 for ix in 0..image.width {
                     for iy in 0..image.height {
-                        all_match &= image.get(ix,iy) != Pixel::Monster || self.get(x+ix,y+iy) != Pixel::Empty;
+                        all_match &= image.get(ix, iy) != Pixel::Monster
+                            || self.get(x + ix, y + iy) != Pixel::Empty;
                     }
                 }
 
@@ -587,7 +624,7 @@ impl Image {
         Image {
             height: self.height,
             width: self.width,
-            raw_data
+            raw_data,
         }
     }
 
@@ -604,7 +641,7 @@ impl Image {
         Image {
             height: self.height,
             width: self.width,
-            raw_data
+            raw_data,
         }
     }
 
@@ -677,13 +714,20 @@ fn main() -> Result<(), TopLevelError> {
         board.print_status();
     }
     let final_value = board.solve()?;
-    let tl = final_value.get(0,0)[0].identity;
-    let tr = final_value.get(final_value.edge_length-1,0)[0].identity;
-    let bl = final_value.get(0,final_value.edge_length-1)[0].identity;
-    let br = final_value.get(final_value.edge_length-1,final_value.edge_length-1)[0].identity;
+    let tl = final_value.get(0, 0)[0].identity;
+    let tr = final_value.get(final_value.edge_length - 1, 0)[0].identity;
+    let bl = final_value.get(0, final_value.edge_length - 1)[0].identity;
+    let br = final_value.get(final_value.edge_length - 1, final_value.edge_length - 1)[0].identity;
 
     println!();
-    println!("Part 1 result:{} * {} * {} * {} = {}", tl, tr, bl, br, tl * tr * bl * br);
+    println!(
+        "Part 1 result:{} * {} * {} * {} = {}",
+        tl,
+        tr,
+        bl,
+        br,
+        tl * tr * bl * br
+    );
     println!();
     let mut base_image = Image::from(final_value);
     base_image.draw();
@@ -699,4 +743,3 @@ fn main() -> Result<(), TopLevelError> {
     }
     Ok(())
 }
-
