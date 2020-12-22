@@ -56,6 +56,8 @@ pub enum TopLevelError {
     TicketParseError(#[from] TicketParseError),
     #[error("Bad rule parse: {0}")]
     GrammarParseError(#[from] GrammarParseError),
+    #[error("Bad tile parse: {0}")]
+    TileParseError(#[from] TileParseError),
 }
 
 #[derive(Error, Debug)]
@@ -207,4 +209,18 @@ pub enum GrammarParseError {
     BadRule(String),
     #[error("Duplicate rule definition for {0}")]
     DuplicateRule(usize),
+}
+
+#[derive(Error, Debug, PartialEq)]
+pub enum TileParseError {
+    #[error("No tile identifier found")]
+    NoTileIdentifier,
+    #[error("Illegal character: '{0}'")]
+    IllegalCharacter(char),
+    #[error("Illegal tile identifier: {0}")]
+    IllegalTileIdentifier(#[from] ParseIntError),
+    #[error("Illegal tile dimensions for tile {0}")]
+    IllegalDimensions(usize),
+    #[error("Weird start to tile: {0}")]
+    BadTileStart(String),
 }
