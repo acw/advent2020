@@ -58,6 +58,8 @@ pub enum TopLevelError {
     GrammarParseError(#[from] GrammarParseError),
     #[error("Bad tile parse: {0}")]
     TileParseError(#[from] TileParseError),
+    #[error("Error parsing directions: {0}")]
+    DirectionParseError(#[from] DirectionParseError),
 }
 
 #[derive(Error, Debug)]
@@ -151,6 +153,8 @@ pub enum ExecutionError {
 pub enum MapOperationError {
     #[error("Out of bounds indexing map with ({0},{1})")]
     OutOfBounds(usize, usize),
+    #[error("Fell off the edge of the map")]
+    FellOffEdge,
 }
 
 #[derive(Error, Debug)]
@@ -223,4 +227,14 @@ pub enum TileParseError {
     IllegalDimensions(usize),
     #[error("Weird start to tile: {0}")]
     BadTileStart(String),
+}
+
+#[derive(Error, Debug, PartialEq)]
+pub enum DirectionParseError {
+    #[error("Invalid base for direction: {0}")]
+    InvalidBaseDirection(char),
+    #[error("Invalid suffix for north/south direction: {0}")]
+    InvalidNorthSouthSuffix(char),
+    #[error("Incomplete north/south direction")]
+    IncompleteNorthSouthDirection,
 }
