@@ -178,7 +178,7 @@ impl Game {
                 println!("The winning card is {}", winning_card);
                 let (winner, _, _) = top_card_info
                     .drain(..)
-                    .find(|(_,x,_)| *x == winning_card)
+                    .find(|(_, x, _)| *x == winning_card)
                     .ok_or(TopLevelError::UnknownError)?;
                 winner.add_cards(winning_card, &mut top_cards);
             }
